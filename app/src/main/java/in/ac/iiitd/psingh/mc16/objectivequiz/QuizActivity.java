@@ -1,5 +1,6 @@
 package in.ac.iiitd.psingh.mc16.objectivequiz;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +20,14 @@ public class QuizActivity extends AppCompatActivity {
 
     private Button mTrueButton;
     private Button mFalseButton;
+    public Button hintbutton;
+    public Button cheatbutton;
     public Integer score=0;
 
     private static final String TAG = "QuizActivity";
-
+    public Random r;
+    public int number;
+    public boolean hintenable=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,7 +102,7 @@ public class QuizActivity extends AppCompatActivity {
         Log.d(TAG, "Inside OnDestroy");
     }
 
-    boolean prime(int n) {
+   boolean prime(int n) {
         for (int i = 2; i <= n/2; i++) {
 
             if (n % i == 0) {
@@ -108,12 +113,23 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     public void generate(View view) {
-        Random r = new Random();
-        final int number = r.nextInt(1000) + 1;
+         r = new Random();
+         number = r.nextInt(1000) + 1;
         TextView mytext = (TextView) findViewById(R.id.textViewer);
         String mystring = String.valueOf(number);
         String question = "Is " + mystring + " a prime number?";
         mytext.setText(question);
+        hintbutton=(Button)findViewById(R.id.button2);
+        cheatbutton=(Button)findViewById(R.id.button);
+        mTrueButton=(Button)findViewById(R.id.TrueButton);
+        hintbutton.setClickable(true);
+        cheatbutton.setClickable(true);
+        hintbutton.setAlpha(1f);
+        cheatbutton.setAlpha(1f);
+        mTrueButton.setEnabled(true);
+        mTrueButton.setAlpha(1f);
+        mFalseButton.setEnabled(true);
+        mFalseButton.setAlpha(1f);
 
 
 
@@ -129,9 +145,15 @@ public class QuizActivity extends AppCompatActivity {
                 else
                 {
                     Toast.makeText(QuizActivity.this, "Incorrect :(", Toast.LENGTH_SHORT).show();
+                    score--;
 
                 }
+                mTrueButton.setClickable(false);
+                mTrueButton.setAlpha(.5f);
+
             }
+
+
         });
 
         mFalseButton.setOnClickListener(new View.OnClickListener(){
@@ -139,6 +161,7 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View view){
                 if(prime(number)) {
                     Toast.makeText(QuizActivity.this, "Incorrect", Toast.LENGTH_SHORT).show();
+                    score--;
                 }
                 else
                 {
@@ -146,6 +169,8 @@ public class QuizActivity extends AppCompatActivity {
                     score++;
 
                 }
+                mFalseButton.setClickable(false);
+                mFalseButton.setAlpha(.5f);
             }
         });
 
@@ -159,6 +184,42 @@ public class QuizActivity extends AppCompatActivity {
 
 
     }
+    public void hint(View view)
+    {
+        //Button button=(Button) v;
+        Intent i=new Intent(this,HintActivity.class);
+        TextView no=(TextView)findViewById(R.id.textViewHint);
+      //  Button hintbutton=(Button)findViewById(R.id.button2);
+        hintbutton=(Button)findViewById(R.id.button2);
+
+        i.putExtra("one",number);
+        hintbutton.setClickable(false);
+        hintbutton.setAlpha(.5f);
+        startActivity(i);
+//        if(!hintbutton.onclick()==false)
+//        {
+//            Toast.makeText(QuizActivity.this, "Hint can only be used once", Toast.LENGTH_SHORT).show();
+//
+//        }
+    }
+
+
+
+
+
+    public void cheat(View view)
+    {
+        Intent i=new Intent(this,CheatActivity.class);
+        i.putExtra("one", number);
+        hintbutton=(Button)findViewById(R.id.button2);
+        cheatbutton=(Button)findViewById(R.id.button);
+        cheatbutton.setClickable(false);
+        hintbutton.setClickable(false);
+        cheatbutton.setAlpha(.5f);
+        hintbutton.setAlpha(.5f);
+        startActivity(i);
+    }
+
 
 }
 
